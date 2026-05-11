@@ -27,7 +27,7 @@ This project is a collaboration between a domain expert and an AI.
 ### Installation & Run
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/photometric_studio.git
+    git clone https://github.com/your-username/Photometric-Studio.git
     cd pbr-studio-pro
     ```
 2.  **Run the application:**
