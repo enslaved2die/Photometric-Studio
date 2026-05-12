@@ -34,7 +34,7 @@ def integrate_normals_corrected(normals, h, w, high_pass_strength):
     return cv2.normalize(height, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
 # --- ENGINE WITH ADAPTIVE LABELS ---
-def solve_pbr_pro_v8(color_images, initial_lights, target_maps, prog_cb, iterations, flip_green, r_mode, m_mode, h_strength, ao_mode):
+def solve_pbr(color_images, initial_lights, target_maps, prog_cb, iterations, flip_green, r_mode, m_mode, h_strength, ao_mode):
     h, w, _ = color_images[0].shape
     results = {}
     
@@ -174,7 +174,7 @@ with st.sidebar:
                 lights.append(LIGHT_PRESETS[st.selectbox(f.name, keys, index=idx, key=f"L_{i}")])
     st.divider()
     with st.expander("🛠️ Map Selection", expanded=True):
-        maps_to_bake = st.multiselect("Bake Targets", ["Albedo", "Normal", "Roughness", "Metallic", "Height", "AO"], default=["Albedo", "Normal", "Roughness", "Height"])
+        maps_to_bake = st.multiselect("Bake Targets", ["Albedo", "Normal", "Roughness", "Metallic", "Height", "AO"], default=["Albedo", "Normal", "Roughness", "AO"])
     with st.expander("🧪 Algorithms", expanded=False):
         r_mode = st.selectbox("Roughness", ["Standard", "High-Pass", "Corrective (Flat-Field)"], index=2)
         m_mode = st.selectbox("Metallic", ["Clean Specular (De-Ghost)", "Specular Deviation", "Luma Threshold", "None (Dielectric)"])
@@ -190,7 +190,7 @@ if files and len(files) >= 3 and run_btn:
     imgs = [cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR) for f in files]
     with results_container:
         pb = st.progress(0)
-        st.session_state.results = solve_pbr_pro_v8(imgs, lights, maps_to_bake, lambda v, t: pb.progress(v, text=t), iter_val, ("DirectX" in n_format), r_mode, m_mode, h_strength, ao_mode)
+        st.session_state.results = solve_pbr(imgs, lights, maps_to_bake, lambda v, t: pb.progress(v, text=t), iter_val, ("DirectX" in n_format), r_mode, m_mode, h_strength, ao_mode)
         st.session_state.is_metallic = (m_mode != "None (Dielectric)" and "Metallic" in maps_to_bake)
         st.rerun()
 
